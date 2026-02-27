@@ -28,7 +28,7 @@ const client = new Client({
 });
 
 const TOKEN = process.env.TOKEN;
-const CHANNEL_ID = process.env.CHANNEL_ID || "1476993433594757192";
+const CHANNEL_ID = process.env.CHANNEL_ID || "1476878069204516864";
 const RELEASE_DATE = new Date("2026-11-19T00:00:00");
 const BACKGROUND_DIR = process.env.BACKGROUND_DIR || "backgrounds";
 
