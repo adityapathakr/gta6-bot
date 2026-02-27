@@ -1,11 +1,19 @@
 require('dotenv').config();
 console.log("GTA VI CINEMATIC MODE");
 
+const path = require('path');
+const fs = require('fs');
+
+if (!process.env.FONTCONFIG_PATH) {
+    process.env.FONTCONFIG_PATH = __dirname;
+}
+if (!process.env.FONTCONFIG_FILE) {
+    process.env.FONTCONFIG_FILE = path.join(__dirname, "fonts.conf");
+}
+
 const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const cron = require('node-cron');
-const path = require('path');
-const fs = require('fs');
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds]
