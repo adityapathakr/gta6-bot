@@ -4,6 +4,15 @@ console.log("GTA VI CINEMATIC MODE");
 const path = require('path');
 const fs = require('fs');
 
+if (process.env.FONTCONFIG_FILE && !fs.existsSync(process.env.FONTCONFIG_FILE)) {
+    console.warn(`Ignoring invalid FONTCONFIG_FILE: ${process.env.FONTCONFIG_FILE}`);
+    delete process.env.FONTCONFIG_FILE;
+}
+if (process.env.FONTCONFIG_PATH && !fs.existsSync(process.env.FONTCONFIG_PATH)) {
+    console.warn(`Ignoring invalid FONTCONFIG_PATH: ${process.env.FONTCONFIG_PATH}`);
+    delete process.env.FONTCONFIG_PATH;
+}
+
 const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const cron = require('node-cron');
@@ -79,21 +88,35 @@ function pickBackgroundPath(now) {
     return backgrounds[index];
 }
 
+async function postFreshCountdownMessage(channel) {
+    const attachment = await generateImage();
+    const message = await channel.send({ files: [attachment] });
+    messageId = message.id;
+}
+
 client.once('clientReady', async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
     const channel = await client.channels.fetch(CHANNEL_ID);
-    const attachment = await generateImage();
-    const message = await channel.send({ files: [attachment] });
-    messageId = message.id;
+    await postFreshCountdownMessage(channel);
 
     console.log("Countdown started...");
 
     cron.schedule('* * * * *', async () => {
-        const newAttachment = await generateImage();
-        const msg = await channel.messages.fetch(messageId);
-        await msg.edit({ files: [newAttachment] });
-        console.log("Updated.");
+        try {
+            const newAttachment = await generateImage();
+            const msg = await channel.messages.fetch(messageId);
+            await msg.edit({ files: [newAttachment] });
+            console.log("Updated.");
+        } catch (error) {
+            if (error && error.code === 10008) {
+                console.warn("Countdown message was deleted. Posting a new one.");
+                await postFreshCountdownMessage(channel);
+                console.log("Posted replacement countdown message.");
+            } else {
+                console.error("Failed to update countdown message:", error);
+            }
+        }
     });
 });
 

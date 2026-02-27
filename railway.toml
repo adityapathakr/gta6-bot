@@ -5,4 +5,4 @@ builder = "NIXPACKS"
 providers = ["node"]
 
 [build.nixpacksPlan.phases.setup]
-nixPkgs = ["fontconfig"]
+nixPkgs = ["fontconfig", "dejavu_fonts"]
