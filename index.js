@@ -2,7 +2,7 @@ require('dotenv').config();
 console.log("GTA VI CINEMATIC MODE");
 
 const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
-const { createCanvas, loadImage } = require('canvas');
+const { createCanvas, loadImage, registerFont } = require('canvas');
 const cron = require('node-cron');
 const path = require('path');
 const fs = require('fs');
@@ -18,6 +18,15 @@ const BACKGROUND_DIR = process.env.BACKGROUND_DIR || "backgrounds";
 
 let messageId = null;
 let cachedBackgrounds = null;
+
+function registerLocalFonts() {
+    const pricedownPath = path.join(__dirname, "pricedown.ttf");
+    if (fs.existsSync(pricedownPath)) {
+        registerFont(pricedownPath, { family: "Pricedown" });
+    } else {
+        console.warn("pricedown.ttf not found. Falling back to system fonts.");
+    }
+}
 
 function roundedRect(ctx, x, y, width, height, radius) {
     const r = Math.min(radius, width / 2, height / 2);
@@ -155,16 +164,16 @@ async function generateImage() {
     ctx.fillStyle = titleGlow;
     ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";
-    ctx.font = '800 50px "Segoe UI"';
+    ctx.font = '800 50px "Pricedown"';
     ctx.fillText("GTA VI", frameX + 38, frameY + 70);
 
     ctx.fillStyle = "rgba(240, 226, 205, 0.90)";
-    ctx.font = '600 24px "Segoe UI"';
-    ctx.fillText("Official Launch Countdown", frameX + 40, frameY + 102);
+    ctx.font = '600 24px "Pricedown"';
+    ctx.fillText("OFFICIAL LAUNCH COUNTDOWN", frameX + 40, frameY + 102);
 
     ctx.textAlign = "right";
     ctx.fillStyle = "rgba(255, 215, 145, 0.96)";
-    ctx.font = '700 30px "Segoe UI"';
+    ctx.font = '700 30px "Pricedown"';
     ctx.fillText("19 NOV 2026", frameX + frameW - 38, frameY + 76);
 
     ctx.strokeStyle = "rgba(255, 198, 122, 0.28)";
@@ -208,12 +217,12 @@ async function generateImage() {
         ctx.textBaseline = "middle";
         ctx.shadowColor = "rgba(0, 0, 0, 0.72)";
         ctx.shadowBlur = 8;
-        ctx.font = '800 92px "Segoe UI"';
+        ctx.font = '800 92px "Pricedown"';
         ctx.fillText(values[i], tileX + tileW / 2, tileY + 86);
 
         ctx.shadowBlur = 0;
         ctx.fillStyle = "#aec0ea";
-        ctx.font = '700 29px "Segoe UI"';
+        ctx.font = '700 29px "Pricedown"';
         ctx.fillText(labels[i], tileX + tileW / 2, tileY + 175);
     }
 
@@ -221,4 +230,5 @@ async function generateImage() {
     return new AttachmentBuilder(buffer, { name: "countdown.png" });
 }
 
+registerLocalFonts();
 client.login(TOKEN);
