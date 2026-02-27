@@ -4,13 +4,6 @@ console.log("GTA VI CINEMATIC MODE");
 const path = require('path');
 const fs = require('fs');
 
-if (!process.env.FONTCONFIG_PATH) {
-    process.env.FONTCONFIG_PATH = __dirname;
-}
-if (!process.env.FONTCONFIG_FILE) {
-    process.env.FONTCONFIG_FILE = path.join(__dirname, "fonts.conf");
-}
-
 const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const cron = require('node-cron');
@@ -86,7 +79,7 @@ function pickBackgroundPath(now) {
     return backgrounds[index];
 }
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
     const channel = await client.channels.fetch(CHANNEL_ID);
