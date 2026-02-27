@@ -1,8 +1,14 @@
 require('dotenv').config();
 console.log("GTA VI CINEMATIC MODE");
+console.log(`Boot commit: ${process.env.RAILWAY_GIT_COMMIT_SHA || "local"}`);
 
 const path = require('path');
 const fs = require('fs');
+
+const systemFontConfig = "/etc/fonts/fonts.conf";
+if (!process.env.FONTCONFIG_FILE && fs.existsSync(systemFontConfig)) {
+    process.env.FONTCONFIG_FILE = systemFontConfig;
+}
 
 if (process.env.FONTCONFIG_FILE && !fs.existsSync(process.env.FONTCONFIG_FILE)) {
     console.warn(`Ignoring invalid FONTCONFIG_FILE: ${process.env.FONTCONFIG_FILE}`);
