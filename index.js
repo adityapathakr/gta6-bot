@@ -31,6 +31,7 @@ const TOKEN = process.env.TOKEN;
 const CHANNEL_ID = process.env.CHANNEL_ID || "1476878069204516864";
 const RELEASE_DATE = new Date("2026-11-19T00:00:00");
 const BACKGROUND_DIR = process.env.BACKGROUND_DIR || "backgrounds";
+const COUNTDOWN_MARKER = "gta6-countdown";
 
 let messageId = null;
 let cachedBackgrounds = null;
@@ -96,15 +97,34 @@ function pickBackgroundPath(now) {
 
 async function postFreshCountdownMessage(channel) {
     const attachment = await generateImage();
-    const message = await channel.send({ files: [attachment] });
+    const message = await channel.send({ content: COUNTDOWN_MARKER, files: [attachment] });
     messageId = message.id;
+}
+
+async function findExistingCountdownMessage(channel) {
+    const messages = await channel.messages.fetch({ limit: 25 });
+    return (
+        messages.find((msg) => {
+            if (msg.author?.id !== client.user?.id) return false;
+            if (msg.content === COUNTDOWN_MARKER) return true;
+            return msg.attachments.some((att) => att.name === "countdown.png");
+        }) || null
+    );
 }
 
 client.once('clientReady', async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
     const channel = await client.channels.fetch(CHANNEL_ID);
-    await postFreshCountdownMessage(channel);
+    const existingCountdown = await findExistingCountdownMessage(channel);
+
+    if (existingCountdown) {
+        const attachment = await generateImage();
+        await existingCountdown.edit({ content: COUNTDOWN_MARKER, files: [attachment] });
+        messageId = existingCountdown.id;
+    } else {
+        await postFreshCountdownMessage(channel);
+    }
 
     console.log("Countdown started...");
 
@@ -112,13 +132,19 @@ client.once('clientReady', async () => {
         try {
             const newAttachment = await generateImage();
             const msg = await channel.messages.fetch(messageId);
-            await msg.edit({ files: [newAttachment] });
+            await msg.edit({ content: COUNTDOWN_MARKER, files: [newAttachment] });
             console.log("Updated.");
         } catch (error) {
             if (error && error.code === 10008) {
                 console.warn("Countdown message was deleted. Posting a new one.");
-                await postFreshCountdownMessage(channel);
-                console.log("Posted replacement countdown message.");
+                const existingCountdown = await findExistingCountdownMessage(channel);
+                if (existingCountdown) {
+                    messageId = existingCountdown.id;
+                    console.log("Rebound to existing countdown message.");
+                } else {
+                    await postFreshCountdownMessage(channel);
+                    console.log("Posted replacement countdown message.");
+                }
             } else {
                 console.error("Failed to update countdown message:", error);
             }
