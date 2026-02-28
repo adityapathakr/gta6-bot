@@ -36,11 +36,11 @@ let messageId = null;
 let cachedBackgrounds = null;
 
 function registerLocalFonts() {
-    const pricedownPath = path.join(__dirname, "pricedown.ttf");
-    if (fs.existsSync(pricedownPath)) {
-        registerFont(pricedownPath, { family: "Pricedown" });
+    const gtaArtDecoPath = path.join(__dirname, "GTA Art Deco - Medium.ttf");
+    if (fs.existsSync(gtaArtDecoPath)) {
+        registerFont(gtaArtDecoPath, { family: "GTA Art Deco" });
     } else {
-        console.warn("pricedown.ttf not found. Falling back to system fonts.");
+        console.warn("GTA Art Deco - Medium.ttf not found. Falling back to system fonts.");
     }
 }
 
@@ -194,16 +194,16 @@ async function generateImage() {
     ctx.fillStyle = titleGlow;
     ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";
-    ctx.font = '800 50px "Pricedown"';
+    ctx.font = '800 50px "GTA Art Deco"';
     ctx.fillText("GTA VI", frameX + 38, frameY + 70);
 
     ctx.fillStyle = "rgba(240, 226, 205, 0.90)";
-    ctx.font = '600 24px "Pricedown"';
+    ctx.font = '600 24px "GTA Art Deco"';
     ctx.fillText("OFFICIAL LAUNCH COUNTDOWN", frameX + 40, frameY + 102);
 
     ctx.textAlign = "right";
     ctx.fillStyle = "rgba(255, 215, 145, 0.96)";
-    ctx.font = '700 30px "Pricedown"';
+    ctx.font = '700 30px "GTA Art Deco"';
     ctx.fillText("19 NOV 2026", frameX + frameW - 38, frameY + 76);
 
     ctx.strokeStyle = "rgba(255, 198, 122, 0.28)";
@@ -247,12 +247,12 @@ async function generateImage() {
         ctx.textBaseline = "middle";
         ctx.shadowColor = "rgba(0, 0, 0, 0.72)";
         ctx.shadowBlur = 8;
-        ctx.font = '800 92px "Pricedown"';
+        ctx.font = '800 92px "GTA Art Deco"';
         ctx.fillText(values[i], tileX + tileW / 2, tileY + 86);
 
         ctx.shadowBlur = 0;
         ctx.fillStyle = "#aec0ea";
-        ctx.font = '700 29px "Pricedown"';
+        ctx.font = '700 29px "GTA Art Deco"';
         ctx.fillText(labels[i], tileX + tileW / 2, tileY + 175);
     }
 
